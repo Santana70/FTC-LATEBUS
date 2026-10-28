@@ -72,10 +72,9 @@ public class ButtonRPM extends LinearOpMode {
                 shooterEnabled = false;
                 kickerServo.setPower(0.0);
             }
-
             // B activates the kicker.
             if (b && !previousB) {
-                kickerServo.setPower(1.0);
+                kickerServo.setPower(-1.0);
             }
 
             previousA = a;
