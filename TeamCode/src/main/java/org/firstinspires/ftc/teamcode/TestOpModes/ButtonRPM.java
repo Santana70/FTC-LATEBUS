@@ -6,7 +6,6 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 @TeleOp(name = "ButtonRPM", group = "TeleOp")
 public class ButtonRPM extends LinearOpMode {
@@ -21,11 +20,15 @@ public class ButtonRPM extends LinearOpMode {
     private static final double TICKS_PER_FLYWHEEL_REV =
             28.0 * (3.0 / 4.0);
 
+    // PIDF values from ShooterPIDFTuner
+    private static final double PID_P = 0.0015;
+    private static final double PID_I = 0.0;
+    private static final double PID_D = 0.0;
+    private static final double PID_F = 0.005;
+
     @Override
     public void runOpMode() {
 
-        // Make sure these names and device types match the Robot
-        // Configuration in the Driver Station.
         DcMotorEx shooter =
                 hardwareMap.get(DcMotorEx.class, SHOOTER_NAME);
 
@@ -36,17 +39,22 @@ public class ButtonRPM extends LinearOpMode {
         shooter.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         shooter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        // IMPORTANT:
-        // Do not apply custom PIDF coefficients during this test.
-        // Use the motor controller's existing velocity PIDF settings.
+        // Apply custom velocity PIDF coefficients.
+        // Temporarily use the hub's existing velocity PIDF.
+        shooter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         shooter.setVelocity(0.0);
         kickerServo.setPower(0.0);
 
         telemetry.addLine("ButtonRPM ready");
-        telemetry.addLine("Press A to start shooter");
-        telemetry.addLine("Press START to stop shooter");
-        telemetry.addLine("Press B to activate kicker");
+        telemetry.addLine("A: Start shooter");
+        telemetry.addLine("START: Stop shooter");
+        telemetry.addLine("B: Activate kicker");
+        telemetry.addData(
+                "PIDF",
+                "P %.4f | I %.4f | D %.4f | F %.4f",
+                PID_P, PID_I, PID_D, PID_F
+        );
         telemetry.update();
 
         waitForStart();
@@ -62,9 +70,9 @@ public class ButtonRPM extends LinearOpMode {
             boolean start = gamepad1.start;
             boolean b = gamepad1.b;
 
-            // A toggles the shooter ON.
+            // A toggles the shooter on.
             if (a && !previousA) {
-                shooterEnabled = true;
+                shooterEnabled = !shooterEnabled;
             }
 
             // START stops the shooter and kicker.
@@ -72,7 +80,8 @@ public class ButtonRPM extends LinearOpMode {
                 shooterEnabled = false;
                 kickerServo.setPower(0.0);
             }
-            // B activates the kicker.
+
+            // B activates the continuous rotation kicker servo.
             if (b && !previousB) {
                 kickerServo.setPower(-1.0);
             }
@@ -90,20 +99,26 @@ public class ButtonRPM extends LinearOpMode {
                 shooter.setVelocity(0.0);
             }
 
-            // Convert measured encoder velocity back to flywheel RPM.
             double measuredRPM =
                     shooter.getVelocity() * 60.0
                             / TICKS_PER_FLYWHEEL_REV;
 
             telemetry.addData("Shooter enabled", shooterEnabled);
-            telemetry.addData("Target RPM", "%.0f", TARGET_RPM);
+            telemetry.addData(
+                    "Target RPM", "%.0f",
+                    shooterEnabled ? TARGET_RPM : 0.0
+            );
             telemetry.addData("Measured RPM", "%.0f", measuredRPM);
             telemetry.addData(
-                    "RPM error", "%.0f", TARGET_RPM - measuredRPM);
+                    "RPM error", "%.0f",
+                    (shooterEnabled ? TARGET_RPM : 0.0) - measuredRPM
+            );
             telemetry.addData(
-                    "Encoder ticks/sec", "%.1f", shooter.getVelocity());
-            telemetry.update();
+                    "Encoder ticks/sec", "%.1f",
+                    shooter.getVelocity()
+            );
 
+            telemetry.update();
             idle();
         }
 
