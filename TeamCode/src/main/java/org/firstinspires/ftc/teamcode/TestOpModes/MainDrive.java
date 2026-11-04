@@ -4,8 +4,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-@TeleOp(name = "Mecanum", group = "Test")
-public class MecanumTestOpMode extends LinearOpMode {
+@TeleOp(name = "Mecanum", group = "ATeleOp")
+public class MainDrive extends LinearOpMode {
     @Override
     public void runOpMode() {
         // Initialize
