@@ -86,7 +86,7 @@ public class PIDFTuner extends LinearOpMode {
                 }
             }
 
-            // Set target to 3000 RPM with B.
+            // Set target to 2200 RPM with B.
             if (b && !previousB) {
                 targetRpm = TARGET_RPM;
                 shooterEnabled = true;

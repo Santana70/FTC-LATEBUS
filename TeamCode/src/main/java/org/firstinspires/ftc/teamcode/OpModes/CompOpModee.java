@@ -51,9 +51,9 @@ public class CompOpModee extends LinearOpMode {
         kickerServo.setPower(0.0);
 
         telemetry.addLine("Comp ready");
-        telemetry.addLine("Drive: left stick to translate, right stick X to turn");
-        telemetry.addLine("Intake: hold right trigger forward, left trigger reverse");
-        telemetry.addLine("Shooter: A toggles; START stops shooter and kicker; B activates kicker");
+        telemetry.addLine(" Left Stick For Movement, Right Stick For Rotation");
+        telemetry.addLine("Hold right trigger forward, Left trigger reverse");
+        telemetry.addLine("Shooter: A To Run Shooter At 2200 RPM, B To Run Kicker, START To Stop All");
         telemetry.addData("Intake speed", intake.getSpeed());
         telemetry.addData("Configured PIDF", "%.4f / %.4f / %.4f / %.4f",
                 PID_P, PID_I, PID_D, PID_F);
@@ -121,11 +121,6 @@ public class CompOpModee extends LinearOpMode {
             PIDFCoefficients activePIDF = shooter.getPIDFCoefficients(
                     DcMotor.RunMode.RUN_USING_ENCODER);
 
-            telemetry.addLine("---- DRIVE ----");
-            telemetry.addData("Front left", "%.2f", frontLeftPower / max);
-            telemetry.addData("Front right", "%.2f", frontRightPower / max);
-            telemetry.addData("Back left", "%.2f", backLeftPower / max);
-            telemetry.addData("Back right", "%.2f", backRightPower / max);
 
             telemetry.addLine("---- INTAKE ----");
             String intakeState = gamepad1.right_trigger > 0.1 ? "Forward"
@@ -136,7 +131,6 @@ public class CompOpModee extends LinearOpMode {
             telemetry.addData("Power", intakePower);
 
             telemetry.addLine("---- SHOOTER ----");
-            telemetry.addData("Enabled", shooterEnabled);
             telemetry.addData("Target RPM", "%.0f", shooterEnabled ? TARGET_RPM : 0.0);
             telemetry.addData("Measured RPM", "%.0f", measuredRPM);
             telemetry.addData("RPM Error", "%.0f",

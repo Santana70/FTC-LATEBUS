@@ -20,11 +20,14 @@ public class ButtonRPM extends LinearOpMode {
     private static final double TICKS_PER_FLYWHEEL_REV =
             28.0 * (3.0 / 4.0);
 
-    // Custom PIDF values
+    // Your custom PIDF values, saved for the next tuning test.
     private static final double PID_P = 0.0018;
     private static final double PID_I = 0.0;
     private static final double PID_D = 0.0;
     private static final double PID_F = 0.005;
+
+    // Keep false for this diagnostic test.
+    private static final boolean USE_CUSTOM_PIDF = false;
 
     @Override
     public void runOpMode() {
@@ -42,21 +45,20 @@ public class ButtonRPM extends LinearOpMode {
         shooter.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         shooter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        // Apply custom PIDF values.
-        shooter.setVelocityPIDFCoefficients(
-                PID_P, PID_I, PID_D, PID_F
-        );
+        if (USE_CUSTOM_PIDF) {
+            shooter.setVelocityPIDFCoefficients(
+                    PID_P, PID_I, PID_D, PID_F
+            );
+        }
 
         shooter.setVelocity(0.0);
         kickerServo.setPower(0.0);
 
-        telemetry.addLine("ButtonRPM ready");
+        telemetry.addLine("ButtonRPM READY");
         telemetry.addLine("A: Toggle shooter");
         telemetry.addLine("START: Stop shooter and kicker");
         telemetry.addLine("B: Activate kicker");
-        telemetry.addData("Configured PIDF",
-                "%.4f / %.4f / %.4f / %.4f",
-                PID_P, PID_I, PID_D, PID_F);
+        telemetry.addData("Custom PIDF enabled", USE_CUSTOM_PIDF);
         telemetry.update();
 
         waitForStart();
@@ -102,35 +104,34 @@ public class ButtonRPM extends LinearOpMode {
                     shooter.getVelocity() * 60.0
                             / TICKS_PER_FLYWHEEL_REV;
 
-            double shooterPower = shooter.getPower();
-            double batteryVoltage = battery.getVoltage();
-
-            // Read the actual active controller coefficients.
             PIDFCoefficients activePIDF =
                     shooter.getPIDFCoefficients(
                             DcMotor.RunMode.RUN_USING_ENCODER
                     );
 
+            telemetry.addLine("---- BUTTONS ----");
+            telemetry.addData("A pressed", a);
+            telemetry.addData("Shooter enabled", shooterEnabled);
+            telemetry.addData("B pressed", b);
+
             telemetry.addLine("---- SHOOTER ----");
-            telemetry.addData("Enabled", shooterEnabled);
-            telemetry.addData("Target RPM", "%.0f",
+            telemetry.addData("Target RPM",
                     shooterEnabled ? TARGET_RPM : 0.0);
             telemetry.addData("Measured RPM", "%.0f", measuredRPM);
-            telemetry.addData("RPM Error", "%.0f",
-                    (shooterEnabled ? TARGET_RPM : 0.0) - measuredRPM);
-
-            telemetry.addLine("---- MOTOR OUTPUT ----");
-            telemetry.addData("Shooter Power", "%.3f", shooterPower);
-            telemetry.addData("Battery Voltage", "%.2f V",
-                    batteryVoltage);
+            telemetry.addData("Shooter Power", "%.3f",
+                    shooter.getPower());
             telemetry.addData("Encoder ticks/sec", "%.1f",
                     shooter.getVelocity());
 
+            telemetry.addLine("---- BATTERY ----");
+            telemetry.addData("Voltage", "%.2f V",
+                    battery.getVoltage());
+
             telemetry.addLine("---- ACTIVE PIDF ----");
-            telemetry.addData("Active P", "%.6f", activePIDF.p);
-            telemetry.addData("Active I", "%.6f", activePIDF.i);
-            telemetry.addData("Active D", "%.6f", activePIDF.d);
-            telemetry.addData("Active F", "%.6f", activePIDF.f);
+            telemetry.addData("P", "%.6f", activePIDF.p);
+            telemetry.addData("I", "%.6f", activePIDF.i);
+            telemetry.addData("D", "%.6f", activePIDF.d);
+            telemetry.addData("F", "%.6f", activePIDF.f);
 
             telemetry.update();
             idle();

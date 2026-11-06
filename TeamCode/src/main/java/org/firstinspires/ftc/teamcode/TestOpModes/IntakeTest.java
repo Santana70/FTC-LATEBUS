@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.Subsystems.Intake;
 
 @TeleOp(name = "Intake", group = "ATeleOp")
-public class IntakeOpMode extends LinearOpMode {
+public class IntakeTest extends LinearOpMode {
     private static final String INTAKE_MOTOR_NAME = "Intake";
 
     @Override
