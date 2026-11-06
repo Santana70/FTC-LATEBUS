@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 @TeleOp(name = "Shooter PIDF Test", group = "Test")
-public class ShooterPIDFTuner extends LinearOpMode {
+public class PIDFTuner extends LinearOpMode {
 
     private static final String SHOOTER_NAME = "shooter";
 

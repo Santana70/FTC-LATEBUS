@@ -9,19 +9,21 @@ import com.qualcomm.robotcore.hardware.IMU;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
-@Autonomous(name = "Encoder IMU Auto", group = "Auto")
-public class EncoderImuAuto extends LinearOpMode {
+@Autonomous(name = "EncoderAutoFNT", group = "Auto")
+public class EncoderFNT extends LinearOpMode {
 
-    // Core Hex encoder: 288 counts per motor-shaft revolution.
-    // A 2:1 speed gearbox makes the wheel turn twice per motor revolution.
+    // Core Hex encoder and 2:1 speed gearbox:
+    // 288 motor counts per revolution; wheel turns twice per motor turn.
     private static final double COUNTS_PER_MOTOR_REV = 288.0;
     private static final double DRIVE_GEAR_REDUCTION = 0.5;
-    private static final double WHEEL_DIAMETER_INCHES = 4.0; // Change to your measured wheel diameter.
+    private static final double WHEEL_DIAMETER_INCHES = 4.0; // Set to your measured wheel diameter.
     private static final double COUNTS_PER_INCH =
             COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION
                     / (Math.PI * WHEEL_DIAMETER_INCHES);
 
     private static final double HEADING_KP = 0.015;
+    private static final double TURN_KP = 0.012;
+    private static final double TURN_TOLERANCE_DEGREES = 2.0;
 
     private DcMotorEx frontLeft;
     private DcMotorEx frontRight;
@@ -36,25 +38,22 @@ public class EncoderImuAuto extends LinearOpMode {
         backLeft = hardwareMap.get(DcMotorEx.class, "backLeft");
         backRight = hardwareMap.get(DcMotorEx.class, "backRight");
 
-        // Match the motor directions in your TeleOp.
+        // Same direction setup as your TeleOp.
         frontLeft.setDirection(DcMotor.Direction.REVERSE);
-        backLeft.setDirection(DcMotor.Direction.REVERSE);
+        backLeft.setDirection(DcMotor.Direction.FORWARD);
 
         imu = hardwareMap.get(IMU.class, "imu");
 
-        // Assumes the Control Hub is flat, logo facing the robot's front,
-        // and USB port facing the robot's back.
-        RevHubOrientationOnRobot orientation = new RevHubOrientationOnRobot(
-                RevHubOrientationOnRobot.LogoFacingDirection.FORWARD,
+        // Hub flat, logo facing robot front, USB facing robot back.
+        RevHubOrientationOnRobot hubOrientation = new RevHubOrientationOnRobot(
+                RevHubOrientationOnRobot.LogoFacingDirection.UP,
                 RevHubOrientationOnRobot.UsbFacingDirection.FORWARD);
-        imu.initialize(new IMU.Parameters(orientation));
+        imu.initialize(new IMU.Parameters(hubOrientation));
 
         DcMotorEx[] motors = {frontLeft, frontRight, backLeft, backRight};
-
         for (DcMotorEx motor : motors) {
             motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            motor.setTargetPosition(0);
             motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
 
@@ -67,12 +66,16 @@ public class EncoderImuAuto extends LinearOpMode {
 
         imu.resetYaw();
 
-        // Example: drive forward 24 inches, holding the starting heading.
-        driveForward(24.0, 0.30, 0.0);
+        // Sequence, similar to your timed example:
+        driveForward(24.0, 0.90, 0.0);  // Forward 24 inches
+        sleep(300);
+
+        turnToHeading(90.0, 0.90);      // Turn clockwise to 90 degrees
+        sleep(300);
+
+        driveForward(24.0, 0.90, 0.0); // Forward 24 inches at the new heading
 
         stopDrive();
-
-        // Leave motors in the usual open-loop mode when the auto movement ends.
         for (DcMotorEx motor : motors) {
             motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         }
@@ -88,37 +91,73 @@ public class EncoderImuAuto extends LinearOpMode {
         }
 
         double power = Math.abs(maxPower);
-        double timeoutSeconds = Math.max(2.0, Math.abs(inches) / 4.0 + 2.0);
+        double timeout = Math.max(2.0, Math.abs(inches) / 4.0 + 2.0);
         double startTime = getRuntime();
 
         while (opModeIsActive()
-                && (frontLeft.isBusy() || frontRight.isBusy()
-                || backLeft.isBusy() || backRight.isBusy())
-                && getRuntime() - startTime < timeoutSeconds) {
+                && anyMotorBusy()
+                && getRuntime() - startTime < timeout) {
 
-            double heading = imu.getRobotYawPitchRollAngles()
-                    .getYaw(AngleUnit.DEGREES);
+            double heading = getHeading();
             double error = wrapDegrees(targetHeading - heading);
             double correction = error * HEADING_KP;
 
-            // RUN_TO_POSITION uses positive power; heading correction adjusts
-            // the left and right sides while encoders control distance.
-            double leftPower = clip(power - correction, 0.0, 1.0);
-            double rightPower = clip(power + correction, 0.0, 1.0);
+            // RUN_TO_POSITION takes positive power; adjust each side to correct heading.
+            double leftPower = clip(power - correction, 0.05, 1.0);
+            double rightPower = clip(power + correction, 0.05, 1.0);
 
             frontLeft.setPower(leftPower);
             backLeft.setPower(leftPower);
             frontRight.setPower(rightPower);
             backRight.setPower(rightPower);
 
-            telemetry.addData("Heading", "%.1f", heading);
+            telemetry.addData("Drive heading", "%.1f", heading);
             telemetry.addData("Heading error", "%.1f", error);
-            telemetry.addData("FL encoder", frontLeft.getCurrentPosition());
-            telemetry.addData("FR encoder", frontRight.getCurrentPosition());
             telemetry.update();
+            idle();
         }
 
         stopDrive();
+    }
+
+    private void turnToHeading(double targetHeading, double maxPower) {
+        double startTime = getRuntime();
+        double timeout = 5.0;
+
+        while (opModeIsActive() && getRuntime() - startTime < timeout) {
+            double error = wrapDegrees(targetHeading - getHeading());
+
+            if (Math.abs(error) <= TURN_TOLERANCE_DEGREES) {
+                break;
+            }
+
+            double turnPower = clip(Math.abs(error) * TURN_KP, 0.10, maxPower);
+
+            // Positive power on left and negative on right turns clockwise
+            // with the motor directions used above. Reverse these signs if needed.
+            double direction = Math.signum(error);
+            frontLeft.setPower(direction * turnPower);
+            backLeft.setPower(direction * turnPower);
+            frontRight.setPower(-direction * turnPower);
+            backRight.setPower(-direction * turnPower);
+
+            telemetry.addData("Turn heading", "%.1f", getHeading());
+            telemetry.addData("Target heading", "%.1f", targetHeading);
+            telemetry.addData("Turn error", "%.1f", error);
+            telemetry.update();
+            idle();
+        }
+
+        stopDrive();
+    }
+
+    private boolean anyMotorBusy() {
+        return frontLeft.isBusy() || frontRight.isBusy()
+                || backLeft.isBusy() || backRight.isBusy();
+    }
+
+    private double getHeading() {
+        return imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
     }
 
     private double wrapDegrees(double degrees) {

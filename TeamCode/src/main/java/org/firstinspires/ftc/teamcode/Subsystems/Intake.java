@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 // controls intake motor speed
 public class Intake {
     private final DcMotor motor;
-    private double speed = 1;
+    private double speed = .90;
 
     public Intake(HardwareMap hardwareMap, String Intake) {
         motor = hardwareMap.get(DcMotor.class, Intake);
@@ -23,11 +23,11 @@ public class Intake {
     }
 
     public void run() {
-        motor.setPower(speed);
+        motor.setPower(-speed);
     }
 
     public void reverse() {
-        motor.setPower(-speed);
+        motor.setPower(speed);
     }
 
     public void stop() {
