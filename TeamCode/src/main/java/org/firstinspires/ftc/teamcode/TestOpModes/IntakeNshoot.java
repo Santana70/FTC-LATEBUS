@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.OpModes;
+package org.firstinspires.ftc.teamcode.TestOpModes;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.teamcode.Subsystems.Intake;
-
+// only to test the intake and shooter without drive input
 @TeleOp(name = "IntakeNshoot", group = "ATeleOp")
 public class IntakeNshoot extends LinearOpMode {
     private static final String INTAKE_MOTOR_NAME = "Intake";

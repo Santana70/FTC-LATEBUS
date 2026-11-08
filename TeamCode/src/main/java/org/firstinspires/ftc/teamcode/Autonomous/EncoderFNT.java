@@ -8,11 +8,11 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.IMU;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-
+// currently in the works and learning
 @Autonomous(name = "EncoderAutoFNT", group = "Auto")
 public class EncoderFNT extends LinearOpMode {
 
-    // Core Hex encoder and 2:1 speed gearbox:
+    // Core Hex encoder and 2:1 speed ratio:
     // 288 motor counts per revolution; wheel turns twice per motor turn.
     private static final double COUNTS_PER_MOTOR_REV = 288.0;
     private static final double DRIVE_GEAR_REDUCTION = 0.5;
@@ -47,7 +47,7 @@ public class EncoderFNT extends LinearOpMode {
         // Hub flat, logo facing robot front, USB facing robot back.
         RevHubOrientationOnRobot hubOrientation = new RevHubOrientationOnRobot(
                 RevHubOrientationOnRobot.LogoFacingDirection.UP,
-                RevHubOrientationOnRobot.UsbFacingDirection.FORWARD);
+                RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD);
         imu.initialize(new IMU.Parameters(hubOrientation));
 
         DcMotorEx[] motors = {frontLeft, frontRight, backLeft, backRight};
@@ -137,7 +137,7 @@ public class EncoderFNT extends LinearOpMode {
             // with the motor directions used above. Reverse these signs if needed.
             double direction = Math.signum(error);
             frontLeft.setPower(direction * turnPower);
-            backLeft.setPower(direction * turnPower);
+            backLeft.setPower(-direction * turnPower);
             frontRight.setPower(-direction * turnPower);
             backRight.setPower(-direction * turnPower);
 

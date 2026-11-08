@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 @Autonomous(name = "ForwardDriveNTurn", group = "Auto")
 public class ForwardDriveNTurn extends LinearOpMode {
-
+// not as precise and needs exact postitioning to be used
     @Override
     public void runOpMode() {
         DcMotor frontLeft = hardwareMap.get(DcMotor.class, "frontLeft");

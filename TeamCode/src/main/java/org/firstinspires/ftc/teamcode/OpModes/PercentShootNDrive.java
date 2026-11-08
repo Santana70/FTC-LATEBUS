@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 // only can be used with expansion hub
 @TeleOp(name = "ShootNDrive", group = "CompOpModes")
 public class PercentShootNDrive extends LinearOpMode {
-
+// not in use
     @Override
     public void runOpMode() {
         DcMotor frontLeftMotor = hardwareMap.get(DcMotor.class, "frontLeft");

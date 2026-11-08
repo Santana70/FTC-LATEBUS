@@ -9,14 +9,15 @@ import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.teamcode.Subsystems.Intake;
-//can only be used with expansion hub
-@TeleOp(name = "Competition OpMode", group = "ATeleOp")
-public class CompOpModee extends LinearOpMode {
+
+// Can only be used with expansion hub
+@TeleOp(name = "CompTelop", group = "ATeleOp")
+public class CompTelop extends LinearOpMode {
     private static final String INTAKE_MOTOR_NAME = "Intake";
     private static final String SHOOTER_NAME = "Shooter";
     private static final String KICKER_SERVO_NAME = "kicker";
 
-    private static final double TARGET_RPM = 2200.0;
+    private static final double WALL_SHOT = 2200.0;
     private static final double TICKS_PER_FLYWHEEL_REV = 28.0 * (3.0 / 4.0);
 
     private static final double PID_P = 0.0018;
@@ -24,8 +25,12 @@ public class CompOpModee extends LinearOpMode {
     private static final double PID_D = 0.0;
     private static final double PID_F = 0.005;
 
+    private static final long KICKER_DELAY_MS = 2000;
+    private static final double KICKER_POWER = -1.0;
+
     @Override
     public void runOpMode() {
+        // installization
         DcMotor frontLeftMotor = hardwareMap.get(DcMotor.class, "frontLeft");
         DcMotor frontRightMotor = hardwareMap.get(DcMotor.class, "frontRight");
         DcMotor backLeftMotor = hardwareMap.get(DcMotor.class, "backLeft");
@@ -50,21 +55,20 @@ public class CompOpModee extends LinearOpMode {
         shooter.setVelocity(0.0);
         kickerServo.setPower(0.0);
 
-        telemetry.addLine("Comp ready");
-        telemetry.addLine(" Left Stick For Movement, Right Stick For Rotation");
+        telemetry.addLine("Left Stick For Movement, Right Stick For Rotation");
         telemetry.addLine("Hold right trigger forward, Left trigger reverse");
-        telemetry.addLine("Shooter: A To Run Shooter At 2200 RPM, B To Run Kicker, START To Stop All");
+        telemetry.addLine("A: Start shooter; kicker starts after 2 seconds");
+        telemetry.addLine("START: Stop shooter and kicker");
         telemetry.addData("Intake speed", intake.getSpeed());
         telemetry.addData("Configured PIDF", "%.4f / %.4f / %.4f / %.4f",
                 PID_P, PID_I, PID_D, PID_F);
         telemetry.update();
 
         waitForStart();
-
         boolean shooterEnabled = false;
         boolean previousA = false;
         boolean previousStart = false;
-        boolean previousB = false;
+        long shooterStartTime = 0;
 
         while (opModeIsActive()) {
             // Mecanum drive
@@ -76,6 +80,7 @@ public class CompOpModee extends LinearOpMode {
             double frontRightPower = y - x - rx;
             double backLeftPower = y - x + rx;
             double backRightPower = y + x - rx;
+
             double max = Math.max(1.0, Math.max(
                     Math.max(Math.abs(frontLeftPower), Math.abs(backLeftPower)),
                     Math.max(Math.abs(frontRightPower), Math.abs(backRightPower))));
@@ -94,33 +99,39 @@ public class CompOpModee extends LinearOpMode {
                 intake.stop();
             }
 
-            // Shooter and kicker controls use rising edges so a held button acts once.
+            // A starts the shooter process. START stops both mechanisms.
             boolean a = gamepad1.a;
             boolean start = gamepad1.start;
-            boolean b = gamepad1.b;
 
-            if (a && !previousA) {
-                shooterEnabled = !shooterEnabled;
+            if (a && !previousA && !shooterEnabled) {
+                shooterEnabled = true;
+                shooterStartTime = System.currentTimeMillis();
+                kickerServo.setPower(0.0);
             }
+
             if (start && !previousStart) {
                 shooterEnabled = false;
                 kickerServo.setPower(0.0);
-            }
-            if (b && !previousB) {
-                kickerServo.setPower(-1.0);
+                shooter.setVelocity(0.0);
             }
 
             previousA = a;
             previousStart = start;
-            previousB = b;
 
-            double targetTicksPerSecond = TARGET_RPM * TICKS_PER_FLYWHEEL_REV / 60.0;
+            double targetTicksPerSecond =
+                    WALL_SHOT * TICKS_PER_FLYWHEEL_REV / 60.0;
             shooter.setVelocity(shooterEnabled ? targetTicksPerSecond : 0.0);
 
-            double measuredRPM = shooter.getVelocity() * 60.0 / TICKS_PER_FLYWHEEL_REV;
+            // Runs the kicker after the shooter has been running for two seconds
+            if (shooterEnabled
+                    && System.currentTimeMillis() - shooterStartTime >= KICKER_DELAY_MS) {
+                kickerServo.setPower(KICKER_POWER);
+            }
+
+            double measuredRPM =
+                    shooter.getVelocity() * 60.0 / TICKS_PER_FLYWHEEL_REV;
             PIDFCoefficients activePIDF = shooter.getPIDFCoefficients(
                     DcMotor.RunMode.RUN_USING_ENCODER);
-
 
             telemetry.addLine("---- INTAKE ----");
             String intakeState = gamepad1.right_trigger > 0.1 ? "Forward"
@@ -131,16 +142,22 @@ public class CompOpModee extends LinearOpMode {
             telemetry.addData("Power", intakePower);
 
             telemetry.addLine("---- SHOOTER ----");
-            telemetry.addData("Target RPM", "%.0f", shooterEnabled ? TARGET_RPM : 0.0);
+            telemetry.addData("Process", shooterEnabled ? "Running" : "Stopped");
+            telemetry.addData("Target RPM", "%.0f",
+                    shooterEnabled ? WALL_SHOT : 0.0);
             telemetry.addData("Measured RPM", "%.0f", measuredRPM);
             telemetry.addData("RPM Error", "%.0f",
-                    (shooterEnabled ? TARGET_RPM : 0.0) - measuredRPM);
+                    (shooterEnabled ? WALL_SHOT : 0.0) - measuredRPM);
+            telemetry.addData("Kicker", shooterEnabled
+                    && System.currentTimeMillis() - shooterStartTime >= KICKER_DELAY_MS
+                    ? "Running" : "Waiting / Stopped");
             telemetry.addData("Shooter power", "%.3f", shooter.getPower());
             telemetry.addData("Battery voltage", "%.2f V", battery.getVoltage());
             telemetry.addData("Encoder ticks/sec", "%.1f", shooter.getVelocity());
             telemetry.addData("Active PIDF", "%.6f / %.6f / %.6f / %.6f",
                     activePIDF.p, activePIDF.i, activePIDF.d, activePIDF.f);
             telemetry.update();
+
             idle();
         }
 
