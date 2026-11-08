@@ -68,12 +68,6 @@ public class EncoderFNT extends LinearOpMode {
 
         // Sequence, similar to your timed example:
         driveForward(24.0, 0.90, 0.0);  // Forward 24 inches
-        sleep(300);
-
-        turnToHeading(90.0, 0.90);      // Turn clockwise to 90 degrees
-        sleep(300);
-
-        driveForward(24.0, 0.90, 0.0); // Forward 24 inches at the new heading
 
         stopDrive();
         for (DcMotorEx motor : motors) {

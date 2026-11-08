@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 // only can be used with expansion hub
-@TeleOp(name = "ShootNDrive", group = "CompOpModes")
+@TeleOp(name = "ShootNDrive", group = "MAINOPMODES")
 public class PercentShootNDrive extends LinearOpMode {
 // not in use
     @Override

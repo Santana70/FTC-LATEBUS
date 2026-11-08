@@ -11,7 +11,7 @@ import com.qualcomm.robotcore.hardware.VoltageSensor;
 import org.firstinspires.ftc.teamcode.Subsystems.Intake;
 
 // Can only be used with expansion hub
-@TeleOp(name = "CompTelop", group = "ATeleOp")
+@TeleOp(name = "CompTelop", group = "MAINOPMODES")
 public class CompTelop extends LinearOpMode {
     private static final String INTAKE_MOTOR_NAME = "Intake";
     private static final String SHOOTER_NAME = "Shooter";

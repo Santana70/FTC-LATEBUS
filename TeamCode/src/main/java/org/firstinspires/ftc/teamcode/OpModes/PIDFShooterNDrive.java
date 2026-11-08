@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 // only can be used with expansion hub
-@TeleOp(name = "CompOpMode", group = "TeleOp")
+@TeleOp(name = "CompOpMode", group = "MAINOPMODES")
 public class PIDFShooterNDrive extends LinearOpMode {
     private static final String SHOOTER_NAME = "shooter";
     private static final double TARGET_RPM = 2200.0;
