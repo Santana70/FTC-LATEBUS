@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-
+// testing PIDF control
 @TeleOp(name = "Shooter PIDF Test", group = "Test")
 public class PIDFTuner extends LinearOpMode {
 
@@ -28,7 +28,7 @@ public class PIDFTuner extends LinearOpMode {
      * Start with the hub's existing PIDF coefficients.
      * Tune using measured results before enabling custom coefficients.
      */
-    private static final boolean USE_CUSTOM_PIDF = false;
+    private static final boolean USE_CUSTOM_PIDF = true;
 
     private static final double PID_P = 0.0015;
     private static final double PID_I = 0.0;

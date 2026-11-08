@@ -10,23 +10,26 @@ import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.teamcode.Subsystems.Intake;
 
-// Can only be used with expansion hub
+/**  Can only be used with expansion hub
+ * Intake is assigned to port 0 on the expansion hub, Shooter to port 1.
+ */
 @TeleOp(name = "CompTelop", group = "MAINOPMODES")
 public class CompTelop extends LinearOpMode {
     private static final String INTAKE_MOTOR_NAME = "Intake";
     private static final String SHOOTER_NAME = "Shooter";
     private static final String KICKER_SERVO_NAME = "kicker";
 
+    private static final long KICKER_DELAY_MS = 3000;
+    private static final double KICKER_POWER = -1.0;
+
+    private static final double PID_P = 0.0018; //.009
+    private static final double PID_I = 0.0;
+    private static final double PID_D = 0.0; //.00001
+    private static final double PID_F = 0.005; //.0002
+
     private static final double WALL_SHOT = 2200.0;
     private static final double TICKS_PER_FLYWHEEL_REV = 28.0 * (3.0 / 4.0);
 
-    private static final double PID_P = 0.0018;
-    private static final double PID_I = 0.0;
-    private static final double PID_D = 0.0;
-    private static final double PID_F = 0.005;
-
-    private static final long KICKER_DELAY_MS = 2000;
-    private static final double KICKER_POWER = -1.0;
 
     @Override
     public void runOpMode() {

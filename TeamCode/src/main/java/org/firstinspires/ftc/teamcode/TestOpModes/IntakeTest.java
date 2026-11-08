@@ -7,6 +7,7 @@ import org.firstinspires.ftc.teamcode.Subsystems.Intake;
 
 @TeleOp(name = "Intake", group = "ATeleOp")
 public class IntakeTest extends LinearOpMode {
+    // only for testing the intake by itself
     private static final String INTAKE_MOTOR_NAME = "Intake";
 
     @Override

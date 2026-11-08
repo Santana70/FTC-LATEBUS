@@ -25,7 +25,7 @@ public class PercentageShooter extends LinearOpMode {
             if (gamepad1.start) {
                 shooterMotor.setPower(0.0);
             } else if (gamepad1.a) {
-                shooterMotor.setPower(0.95);
+                shooterMotor.setPower(.95);
             } else if (gamepad1.b) {
                 shooterMotor.setPower(0.75);
             }

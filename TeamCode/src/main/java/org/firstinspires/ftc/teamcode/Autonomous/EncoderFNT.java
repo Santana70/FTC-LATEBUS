@@ -67,7 +67,7 @@ public class EncoderFNT extends LinearOpMode {
         imu.resetYaw();
 
         // Sequence, similar to your timed example:
-        driveForward(24.0, 0.90, 0.0);  // Forward 24 inches
+        driveForward(18.0, 0.90, 0.0);  // Forward 24 inches
 
         stopDrive();
         for (DcMotorEx motor : motors) {
