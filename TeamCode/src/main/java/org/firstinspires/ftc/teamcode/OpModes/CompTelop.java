@@ -16,7 +16,7 @@ import org.firstinspires.ftc.teamcode.Subsystems.Intake;
 @TeleOp(name = "CompTelop", group = "MAINOPMODES")
 public class CompTelop extends LinearOpMode {
     private static final String INTAKE_MOTOR_NAME = "Intake";
-    private static final String SHOOTER_NAME = "Shooter";
+    private static final String SHOOTER_NAME = "Nectar";
     private static final String KICKER_SERVO_NAME = "kicker";
 
     private static final long KICKER_DELAY_MS = 2500;

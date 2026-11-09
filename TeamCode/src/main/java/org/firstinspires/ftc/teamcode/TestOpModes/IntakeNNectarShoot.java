@@ -10,10 +10,10 @@ import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.teamcode.Subsystems.Intake;
 // only to test the intake and shooter without drive input
-@TeleOp(name = "IntakeNshoot", group = "ATeleOp")
-public class IntakeNshoot extends LinearOpMode {
+@TeleOp(name = "IntakeNNectarShoot", group = "ATeleOp")
+public class IntakeNNectarShoot extends LinearOpMode {
     private static final String INTAKE_MOTOR_NAME = "Intake";
-    private static final String SHOOTER_NAME = "shooter";
+    private static final String SHOOTER_NAME = "Nectar";
     private static final String KICKER_SERVO_NAME = "kicker";
 
     private static final double TARGET_RPM = 2200.0;

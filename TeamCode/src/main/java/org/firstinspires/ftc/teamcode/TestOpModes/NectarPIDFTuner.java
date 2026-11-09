@@ -6,10 +6,10 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 // testing PIDF control
-@TeleOp(name = "Shooter PIDF Test", group = "Test")
+@TeleOp(name = "Nectar PIDF Test", group = "Test")
 public class NectarPIDFTuner extends LinearOpMode {
 
-    private static final String SHOOTER_NAME = "shooter";
+    private static final String SHOOTER_NAME = "Nectar";
 
     private static final double TARGET_RPM = 2200.0;
     private static final double RPM_STEP = 100.0;

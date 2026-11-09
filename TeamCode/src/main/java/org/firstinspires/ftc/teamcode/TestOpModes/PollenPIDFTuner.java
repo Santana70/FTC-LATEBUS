@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 @TeleOp(name = "Pollen PIDF Tuner", group = "Test")
 public class PollenPIDFTuner extends LinearOpMode {
     // Configure this name to match the pollen shooter motor in the Robot Controller.
-    private static final String SHOOTER_NAME = "pollenShooter";
+    private static final String SHOOTER_NAME = "Pollen";
 
     private static final double PRESET_TARGET_RPM = 3000.0;
     private static final double RPM_STEP = 100.0;

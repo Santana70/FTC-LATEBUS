@@ -5,14 +5,14 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 //will rewrite soon with PIDF control
-@TeleOp(name = "Precentage Shooter", group = "Test")
-public class PercentageShooter extends LinearOpMode {
+@TeleOp(name = "NectarPercentageShooter", group = "Test")
+public class NectarPercentageShooter extends LinearOpMode {
 
     private DcMotor shooterMotor;
 
     @Override
     public void runOpMode() {
-        shooterMotor = hardwareMap.get(DcMotor.class, "shooter");
+        shooterMotor = hardwareMap.get(DcMotor.class, "Nectar");
 
         shooterMotor.setDirection(DcMotor.Direction.REVERSE);
 

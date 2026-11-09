@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.Subsystems.Intake;
-
+// will add pollen shooter soon
 @TeleOp(name = "Percentage Telop", group = "MAINOPMODES")
 public class PercantageTelop extends LinearOpMode {
     private static final String INTAKE_MOTOR_NAME = "Intake";
@@ -22,7 +22,7 @@ public class PercantageTelop extends LinearOpMode {
         DcMotor frontRightMotor = hardwareMap.get(DcMotor.class, "frontRight");
         DcMotor backLeftMotor = hardwareMap.get(DcMotor.class, "backLeft");
         DcMotor backRightMotor = hardwareMap.get(DcMotor.class, "backRight");
-        DcMotor shooterMotor = hardwareMap.get(DcMotor.class, "shooter");
+        DcMotor shooterMotor = hardwareMap.get(DcMotor.class, "Nectar");
         Intake intake = new Intake(hardwareMap, INTAKE_MOTOR_NAME);
         CRServo kickerServo = hardwareMap.get(CRServo.class, KICKER_SERVO_NAME);
 
