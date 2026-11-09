@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 // currently not working??
-@TeleOp(name = "NectarButtonRPM", group = "ATeleOp")
+@TeleOp(name = "NectarButtonRPM", group = "Test")
 public class NectarButtonRPM extends LinearOpMode {
 
     private static final String SHOOTER_NAME = "Nectar";

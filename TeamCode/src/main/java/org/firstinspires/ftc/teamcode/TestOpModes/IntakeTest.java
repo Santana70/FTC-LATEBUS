@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.Subsystems.Intake;
 
-@TeleOp(name = "Intake", group = "ATeleOp")
+@TeleOp(name = "IntakeTest", group = "Test")
 public class IntakeTest extends LinearOpMode {
     // only for testing the intake by itself
     private static final String INTAKE_MOTOR_NAME = "Intake";

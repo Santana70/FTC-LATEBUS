@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.TestOpModes;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 //will rewrite soon with PIDF control
 @TeleOp(name = "NectarPercentageShooter", group = "Test")
@@ -14,7 +15,7 @@ public class NectarPercentageShooter extends LinearOpMode {
     public void runOpMode() {
         shooterMotor = hardwareMap.get(DcMotor.class, "Nectar");
 
-        shooterMotor.setDirection(DcMotor.Direction.REVERSE);
+        shooterMotor.setDirection(DcMotor.Direction.FORWARD);
 
         telemetry.addData("Status", "Initialized");
         telemetry.update();
