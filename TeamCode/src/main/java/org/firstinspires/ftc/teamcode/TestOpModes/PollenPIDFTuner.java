@@ -27,10 +27,11 @@ public class PollenPIDFTuner extends LinearOpMode {
 
     // Tune these for the pollen shooter motor and mechanism.
     private static final boolean USE_CUSTOM_PIDF = true;
-    private static final double PID_P = 0.0015;
+    // test P and F values first before applying D, but main focus on P.
+    private static final double PID_P = 0.0015; //.009
     private static final double PID_I = 0.0;
-    private static final double PID_D = 0.0;
-    private static final double PID_F = 0.005;
+    private static final double PID_D = 0.0; //.00001
+    private static final double PID_F = 0.005; //.0002
 
     @Override
     public void runOpMode() {

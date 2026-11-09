@@ -19,7 +19,7 @@ public class CompTelop extends LinearOpMode {
     private static final String SHOOTER_NAME = "Shooter";
     private static final String KICKER_SERVO_NAME = "kicker";
 
-    private static final long KICKER_DELAY_MS = 3000;
+    private static final long KICKER_DELAY_MS = 2500;
     private static final double KICKER_POWER = -1.0;
 
     private static final double PID_P = 0.0018; //.009

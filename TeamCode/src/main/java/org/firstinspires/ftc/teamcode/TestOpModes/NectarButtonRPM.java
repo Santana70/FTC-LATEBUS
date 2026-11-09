@@ -20,14 +20,14 @@ public class NectarButtonRPM extends LinearOpMode {
     private static final double TICKS_PER_FLYWHEEL_REV =
             28.0 * (3.0 / 4.0);
 
-    // Your custom PIDF values, saved for the next tuning test.
+    // test P and F values first before applying D, but main focus on P.
+
     private static final double PID_P = 0.0018; //.009
     private static final double PID_I = 0.0;
     private static final double PID_D = 0.0; //.00001
     private static final double PID_F = 0.005; //.0002
 
-    // Keep false for this diagnostic test.
-    private static final boolean USE_CUSTOM_PIDF = false;
+    private static final boolean USE_CUSTOM_PIDF = true;
 
     @Override
     public void runOpMode() {
