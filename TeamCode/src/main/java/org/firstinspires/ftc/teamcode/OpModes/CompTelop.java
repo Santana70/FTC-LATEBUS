@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
@@ -65,6 +66,7 @@ public class CompTelop extends LinearOpMode {
                 NECTAR_PID_P, NECTAR_PID_I, NECTAR_PID_D, NECTAR_PID_F);
         shooter.setVelocity(0.0);
 
+        pollenShooter.setDirection(DcMotor.Direction.REVERSE);
         pollenShooter.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         pollenShooter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         pollenShooter.setVelocityPIDFCoefficients(
