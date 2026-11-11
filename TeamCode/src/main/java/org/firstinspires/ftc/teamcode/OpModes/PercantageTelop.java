@@ -6,15 +6,17 @@ import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.Subsystems.Intake;
-// will add pollen shooter soon
+
+// Gamepad Y toggles the pollen shooter.
 @TeleOp(name = "Percentage Telop", group = "MAINOPMODES")
 public class PercantageTelop extends LinearOpMode {
     private static final String INTAKE_MOTOR_NAME = "Intake";
-    private static final String KICKER_SERVO_NAME = "kicker";
-    private static final long KICKER_DELAY_MS = 1000;
+    private static final String KICKER_SERVO_NAME = "Kicker";
+    private static final String POLLEN_MOTOR_NAME = "Pollen";
+    private static final double POLLEN_POWER = -0.90;
     private static final double KICKER_POWER = -1.0;
-    private static final double SHOOTER_HIGH_POWER = 0.85;
-    private static final double SHOOTER_LOW_POWER = 0.65;
+    private static final double SHOOTER_HIGH_POWER = 0.99;
+    private static final double SHOOTER_LOW_POWER = -0.85;
 
     @Override
     public void runOpMode() {
@@ -23,6 +25,7 @@ public class PercantageTelop extends LinearOpMode {
         DcMotor backLeftMotor = hardwareMap.get(DcMotor.class, "backLeft");
         DcMotor backRightMotor = hardwareMap.get(DcMotor.class, "backRight");
         DcMotor shooterMotor = hardwareMap.get(DcMotor.class, "Nectar");
+        DcMotor pollenMotor = hardwareMap.get(DcMotor.class, POLLEN_MOTOR_NAME);
         Intake intake = new Intake(hardwareMap, INTAKE_MOTOR_NAME);
         CRServo kickerServo = hardwareMap.get(CRServo.class, KICKER_SERVO_NAME);
 
@@ -30,17 +33,23 @@ public class PercantageTelop extends LinearOpMode {
         backLeftMotor.setDirection(DcMotor.Direction.REVERSE);
         shooterMotor.setDirection(DcMotor.Direction.REVERSE);
         shooterMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        pollenMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        pollenMotor.setPower(0.0);
         kickerServo.setPower(0.0);
 
         telemetry.addLine("Left stick: drive; right stick: strafe/turn.");
-        telemetry.addLine("A: shooter at 85%; B: shooter at 65%; START: stop.");
-        telemetry.addLine("Triggers: intake forward/reverse; kicker starts after 2 seconds.");
+        telemetry.addLine("A: shooter at 90%; X: shooter at 85%; START: stop.");
+        telemetry.addLine("B: toggle kicker; Y: toggle pollen shooter at 95%.");
+        telemetry.addLine("Triggers: intake forward/reverse.");
         telemetry.addData("Intake speed", intake.getSpeed());
         telemetry.update();
 
         waitForStart();
-        long shooterStartTime = 0;
         boolean shooterRunning = false;
+        boolean kickerRunning = false;
+        boolean pollenRunning = false;
+        boolean previousB = false;
+        boolean previousY = false;
         boolean previousStart = false;
 
         while (opModeIsActive()) {
@@ -70,29 +79,33 @@ public class PercantageTelop extends LinearOpMode {
             }
 
             if (gamepad1.a) {
-                if (!shooterRunning) {
-                    shooterRunning = true;
-                    shooterStartTime = System.currentTimeMillis();
-                }
+                shooterRunning = true;
                 shooterMotor.setPower(SHOOTER_HIGH_POWER);
-            } else if (gamepad1.b) {
-                if (!shooterRunning) {
-                    shooterRunning = true;
-                    shooterStartTime = System.currentTimeMillis();
-                }
+            } else if (gamepad1.x) {
+                shooterRunning = true;
                 shooterMotor.setPower(SHOOTER_LOW_POWER);
             }
 
+            boolean b = gamepad1.b;
             boolean start = gamepad1.start;
+            boolean yButton = gamepad1.y;
+            if (b && !previousB) {
+                kickerRunning = !kickerRunning;
+            }
+            if (yButton && !previousY) {
+                pollenRunning = !pollenRunning;
+            }
             if (start && !previousStart) {
                 shooterRunning = false;
+                pollenRunning = false;
+                kickerRunning = false;
                 shooterMotor.setPower(0.0);
-                kickerServo.setPower(0.0);
             }
+            pollenMotor.setPower(pollenRunning ? POLLEN_POWER : 0.0);
+            previousB = b;
+            previousY = yButton;
             previousStart = start;
 
-            boolean kickerRunning = shooterRunning
-                    && System.currentTimeMillis() - shooterStartTime >= KICKER_DELAY_MS;
             kickerServo.setPower(kickerRunning ? KICKER_POWER : 0.0);
 
             String intakeState = gamepad1.right_trigger > 0.1 ? "Forward"
@@ -100,13 +113,15 @@ public class PercantageTelop extends LinearOpMode {
             telemetry.addData("Shooter power", shooterMotor.getPower());
             telemetry.addData("Shooter", shooterRunning ? "Running" : "Stopped");
             telemetry.addData("Intake", intakeState);
-            telemetry.addData("Kicker", kickerRunning ? "Running" : "Waiting / Stopped");
+            telemetry.addData("Kicker", kickerRunning ? "Running" : "Stopped");
+            telemetry.addData("Pollen shooter", pollenRunning ? "Running at 95%" : "Stopped");
             telemetry.update();
             idle();
         }
 
         intake.stop();
         shooterMotor.setPower(0.0);
+        pollenMotor.setPower(0.0);
         kickerServo.setPower(0.0);
         frontLeftMotor.setPower(0.0);
         frontRightMotor.setPower(0.0);
@@ -114,3 +129,7 @@ public class PercantageTelop extends LinearOpMode {
         backRightMotor.setPower(0.0);
     }
 }
+
+
+
+

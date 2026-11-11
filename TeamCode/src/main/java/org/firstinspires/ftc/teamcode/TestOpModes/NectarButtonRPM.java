@@ -25,7 +25,7 @@ public class NectarButtonRPM extends LinearOpMode {
     private static final double PID_P = 0.0018; //.009
     private static final double PID_I = 0.0;
     private static final double PID_D = 0.0; //.00001
-    private static final double PID_F = 0.005; //.0002
+    private static final double PID_F = 0.2; //.0002
 
     private static final boolean USE_CUSTOM_PIDF = true;
 

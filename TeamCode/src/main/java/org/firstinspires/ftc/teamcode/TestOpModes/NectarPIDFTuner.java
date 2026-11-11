@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-// testing PIDF control
+// testing PIDF control, values dont work need to fix
 @TeleOp(name = "Nectar PIDF Test", group = "Test")
 public class NectarPIDFTuner extends LinearOpMode {
 
@@ -34,7 +34,7 @@ public class NectarPIDFTuner extends LinearOpMode {
     private static final double PID_P = 0.0015; //.009
     private static final double PID_I = 0.0;
     private static final double PID_D = 0.0; //.00001
-    private static final double PID_F = 0.005; //.0002
+    private static final double PID_F = .007; //.0002
 
     @Override
     public void runOpMode() {
